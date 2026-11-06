@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package hamwarmer.v1;
+
+import "hamwarmer/v1/common.proto";
+
+service CatalogService {
+  rpc ListCatalogItems(ListCatalogItemsRequest) returns (ListCatalogItemsResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+}
+
+message ListCatalogItemsRequest {
+  RegionCode region = 1;
+  string query = 2;
+  int32 page_size = 3;
+  string page_token = 4;
+  SortOrder sort_order = 5;
+}
+
+message ListCatalogItemsResponse {
+  repeated CatalogItem items = 1;
+  string next_page_token = 2;
+}
+
+message CatalogItem {
+  string id = 1;
+  string name = 2;
+  Money price = 3;
+  string thumbnail_url = 4;
+  bool limited_edition = 5;
+}

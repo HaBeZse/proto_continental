@@ -1,0 +1,29 @@
+syntax = "proto3";
+package hamwarmer.v1;
+
+message Money {
+  string currency_code = 1; // "EUR", "GBP", "JPY", "USD"
+  int64 minor_units = 2; // 45.00 EUR -> 4500, ¥1500 -> 1500
+}
+
+message LineItem {
+  string catalog_item_id = 1;
+  int32 quantity = 2;
+}
+
+enum RegionCode {
+  REGION_CODE_UNSPECIFIED = 0;
+  REGION_CODE_EU = 1;
+  REGION_CODE_UK = 2;
+  REGION_CODE_JP = 3;
+  REGION_CODE_US = 4;
+}
+
+enum SortOrder {
+  SORT_ORDER_UNSPECIFIED = 0;
+  SORT_ORDER_NEWEST = 1;
+  SORT_ORDER_NAME_ASC = 2;
+  SORT_ORDER_NAME_DESC = 3;
+  SORT_ORDER_PRICE_ASC = 4;
+  SORT_ORDER_PRICE_DESC = 5;
+}

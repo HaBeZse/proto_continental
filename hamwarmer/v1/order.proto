@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package hamwarmer.v1;
+import "hamwarmer/v1/common.proto";
+import "google/protobuf/timestamp.proto";
+
+service OrderService {
+    rpc PlaceOrder(PlaceOrderRequest) returns (PlaceOrderResponse) {
+        option idempotency_level = IDEMPOTENT;
+    }
+
+    rpc GetOrder(GetOrderRequest) returns (GetOrderResponse) {
+        option idempotency_level = NO_SIDE_EFFECTS;
+    }
+
+    rpc PayOrder(PayOrderRequest) returns (PayOrderResponse) {  // Demo payment only for now
+    option idempotency_level = IDEMPOTENT;
+    }
+}
+
+message PlaceOrderRequest {
+    RegionCode region = 1;
+    repeated LineItem items = 2;
+    string idempotency_key = 3; // Client side generated, per checkout UUID
+}
+
+message PlaceOrderResponse {
+    Order order = 1;
+}
+
+message PayOrderRequest {
+    string order_id = 1;
+    bool simulate_decline = 2;
+}
+
+message PayOrderResponse {
+    Order order = 1;
+}
+
+message GetOrderRequest {
+    string order_id = 1;
+}
+
+message GetOrderResponse {
+    Order order = 1;
+}
+
+message Order {
+    string id = 1;
+    RegionCode region = 2;
+    OrderState state = 3;
+    repeated OrderLine lines = 4;
+    Money total = 5;
+    google.protobuf.Timestamp created_at = 6;
+    google.protobuf.Timestamp reservation_expires_at = 7;
+}
+
+message OrderLine {
+    string catalog_item_id = 1;
+    string name = 2;
+    Money unit_price = 3;
+    int32 quantity = 4;
+    Money line_total = 5;
+}
+
+message OutOfStock {
+    repeated string catalog_item_ids = 1;
+}
+
+enum OrderState {
+    ORDER_STATE_UNSPECIFIED = 0;
+    ORDER_STATE_RESERVED = 1;
+    ORDER_STATE_PAID = 2;
+    reserved 3;
+    reserved "ORDER_STATE_CONFIRMED";
+    ORDER_STATE_EXPIRED = 4;
+    ORDER_STATE_FAILED = 5;
+}

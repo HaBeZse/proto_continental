@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package hamwarmer.v1;
+import "hamwarmer/v1/common.proto";
+
+service CartService {
+    rpc QuoteCart(QuoteCartRequest) returns (QuoteCartResponse) {
+        option idempotency_level = NO_SIDE_EFFECTS;
+    }
+
+    rpc GetMyCart (GetMyCartRequest) returns (GetMyCartResponse) {
+        option idempotency_level = NO_SIDE_EFFECTS;
+    }
+    rpc SaveMyCart(SaveMyCartRequest) returns (SaveMyCartResponse);
+}
+
+message QuoteCartRequest {
+    RegionCode region = 1;
+    repeated LineItem items = 2;
+}
+
+message QuoteCartResponse {
+    repeated CartLine lines = 1;
+    Money subtotal = 2;
+}
+
+message GetMyCartRequest {}
+
+message GetMyCartResponse {
+    Cart cart = 1;
+}
+
+message SaveMyCartRequest {
+    RegionCode region = 1;
+    repeated LineItem items = 2;
+    int32 base_version = 3;
+}
+
+message SaveMyCartResponse {
+    Cart cart = 1;
+}
+
+message Cart {
+    RegionCode region = 1;
+    repeated LineItem items = 2;
+    int32 version = 3;
+}
+
+message CartLine {
+    string catalog_item_id = 1;
+    string name = 2;
+    Money unit_price = 3;
+    int32 quantity = 4;
+    Money line_total = 5;
+}

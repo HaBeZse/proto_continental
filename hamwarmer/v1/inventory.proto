@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package hamwarmer.v1;
+import "hamwarmer/v1/common.proto";
+
+service InventoryService {
+    rpc GetStockStatuses(GetStockStatusesRequest) returns (GetStockStatusesResponse) {
+        option idempotency_level = NO_SIDE_EFFECTS;
+    }
+}
+
+message GetStockStatusesRequest {
+    RegionCode region = 1;
+    repeated string catalog_item_ids = 2;
+}
+
+message GetStockStatusesResponse {
+    repeated ItemStockStatus statuses = 1;
+}
+
+message ItemStockStatus {
+    string catalog_item_id = 1;
+    StockState state = 2;
+}
+
+enum StockState {
+    STOCK_STATE_UNSPECIFIED = 0;
+    STOCK_STATE_IN_STOCK = 1;
+    STOCK_STATE_LOW = 2;
+    STOCK_STATE_SOLD_OUT = 3;
+    STOCK_STATE_COMING_SOON = 4;
+}

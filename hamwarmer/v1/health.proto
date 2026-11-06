@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package hamwarmer.v1;
+
+service HealthService {
+  rpc Check(CheckRequest) returns (CheckResponse);
+}
+
+message CheckRequest {}
+
+message CheckResponse {
+  enum Status {
+    STATUS_UNKNOWN_UNSPECIFIED = 0;
+    STATUS_SERVING = 1;
+    STATUS_NOT_SERVING = 2;
+  }
+  Status status = 1;
+}
